@@ -15,6 +15,7 @@ pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret
 @api_view(["GET"])
 def initialize(request):
     user = request.user
+    print(user)
     player = user.player
     player_id = player.id
     uuid = player.uuid
@@ -68,7 +69,9 @@ def say(request):
     data = json.loads(request.body)
     message = data['message']
     room = player.room()
+    print((player))
+    print(player.currentRoom)
     currentPlayerUUIDs = room.playerUUIDs(player_id)
     for p_uuid in currentPlayerUUIDs:
             pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message': f'{player.user.username} says {message}.'})
-    return JsonResponse({'status': "something happened"}, safe=True)
+    return JsonResponse({'response': f"You said {data['message']}"}, safe=True, status=200)
